@@ -70,5 +70,15 @@ def obtain_token():
     return access_token
 
 
+def get_collections():
+    url = "https://api.raindrop.io/rest/v1/collections"
+    headers = {
+        'Authorization': 'Bearer {}'.format(obtain_token())
+    }
+    collections_rs = requests.get(url, headers=headers)
+    for coll in collections_rs.json()['items']:
+        print('"{}" - created on {} - last updated on {}'.format(coll['title'], coll['created'], coll['lastUpdate']))
+
+
 if __name__ == '__main__':
-    obtain_token()
+    get_collections()

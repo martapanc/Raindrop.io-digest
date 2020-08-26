@@ -1,6 +1,7 @@
 # Digest for Raindrop.io
 
 #### Raindrop API
+Documentation: https://developer.raindrop.io/
 
 Obtain authorization code (through browser):
 ```
