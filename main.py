@@ -2,6 +2,7 @@ import os
 import urllib.parse as urlparse
 from urllib.parse import parse_qs
 
+import redis
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
@@ -11,14 +12,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from db_manager import save_token, save_auth_code
-
 # Setup functions to read from .env file
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
 BASE_URL = "https://raindrop.io/oauth/"
 AUTH = "{}authorize?redirect_uri=http://localhost:5000&client_id={}".format(BASE_URL, os.getenv('RAINDROP_CLIENT_ID'))
+
+r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 
 def obtain_code():
@@ -46,13 +47,9 @@ def obtain_code():
 
 
 def obtain_token():
-    auth_code = obtain_code()
-    save_auth_code(auth_code)
-
     url = 'https://raindrop.io/oauth/access_token'
     payload = {
-        'code': auth_code,
-        # 'code': os.getenv('RAINDROP_CODE'),
+        'code': obtain_code(),
         'client_id': os.getenv('RAINDROP_CLIENT_ID'),
         'client_secret': os.getenv('RAINDROP_CLIENT_SECRET'),
         'grant_type': 'authorization_code',
@@ -66,18 +63,30 @@ def obtain_token():
 
     response_body = token_rs.json()
     access_token = response_body['access_token']
-    save_token(access_token, response_body['refresh_token'])
+
+    r.set('access_token', access_token)
+    r.set('refresh_token', response_body['refresh_token'])
+
     return access_token
 
 
 def get_collections():
     url = "https://api.raindrop.io/rest/v1/collections"
+
+    saved_access_token = r.get('access_token')
+    access_token = saved_access_token if saved_access_token else obtain_token()
+
     headers = {
-        'Authorization': 'Bearer {}'.format(obtain_token())
+        'Authorization': 'Bearer {}'.format(access_token)
     }
-    collections_rs = requests.get(url, headers=headers)
-    for coll in collections_rs.json()['items']:
-        print('"{}" - created on {} - last updated on {}'.format(coll['title'], coll['created'], coll['lastUpdate']))
+
+    collections_rs = requests.get(url, headers=headers).json()
+    if collections_rs['items']:
+        for coll in collections_rs['items']:
+            print('"{}" - created on {} - last updated on {}'.format(coll['title'], coll['created'], coll['lastUpdate']))
+    elif collections_rs['errorMessage']:
+        obtain_token()
+        get_collections()
 
 
 if __name__ == '__main__':
