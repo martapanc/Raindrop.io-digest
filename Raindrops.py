@@ -1,4 +1,5 @@
 from datetime import datetime
+import random
 
 import pytz as pytz
 
@@ -27,16 +28,22 @@ def add_bookmarks(collection_id, bookmarks):
 def format_bookmarks(bookmarks):
     result = []
     for b in bookmarks:
-        if get_last_update_time() < to_datetime(b['lastUpdate']):
+        if True:
+        # if get_last_update_time() < to_datetime(b['lastUpdate']):
             result.append({
                 "id": b['_id'],
                 "title": b['title'],
                 "link": b['link'],
                 "created": to_datetime(b['created'])
             })
-            print("New Raindrop added: {}".format(b['title']))
+            # print("New Raindrop added: {}".format(b['title']))
 
     return result
+
+
+def get_random_bookmark():
+    _, random_collection = random.choice(list(collections.items()))
+    return random.choice(random_collection['bookmarks'])
 
 
 def update_time():
