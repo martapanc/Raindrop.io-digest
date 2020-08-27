@@ -12,6 +12,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from Raindrops import collections, add_collection, add_bookmarks
+
 # Setup functions to read from .env file
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -83,11 +85,27 @@ def get_collections():
     collections_rs = requests.get(url, headers=headers).json()
     if collections_rs['items']:
         for coll in collections_rs['items']:
-            print('"{}" - created on {} - last updated on {}'.format(coll['title'], coll['created'], coll['lastUpdate']))
+            add_collection(coll)
     elif collections_rs['errorMessage']:
         obtain_token()
         get_collections()
 
 
+def get_bookmarks():
+    for coll_id, coll in collections.items():
+        url = "https://api.raindrop.io/rest/v1/raindrops/{}".format(coll_id)
+
+        saved_access_token = r.get('access_token')
+        access_token = saved_access_token if saved_access_token else obtain_token()
+
+        headers = {
+            'Authorization': 'Bearer {}'.format(access_token)
+        }
+
+        raindrops_rs = requests.get(url, headers=headers).json()
+        add_bookmarks(coll_id, raindrops_rs['items'])
+
+
 if __name__ == '__main__':
     get_collections()
+    get_bookmarks()
