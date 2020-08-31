@@ -6,6 +6,9 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+flask = "*"
+flask-cors = "*"
+flask_httpauth = "*"
 requests = "*"
 python-dotenv = "*"
 selenium = "*"

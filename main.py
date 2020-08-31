@@ -1,6 +1,7 @@
 import requests
 
-from Raindrops import collections, add_collection, add_bookmarks, update_time, get_last_update_time, get_random_bookmark
+from Raindrops import collections, add_collection, add_bookmarks, update_time, get_last_update_time, \
+    get_random_bookmark, print_posts
 from auth_operations import get_auth_header
 from datetime import datetime, timedelta
 
@@ -48,6 +49,7 @@ def get_random_bookmarks(number):
 
 
 if __name__ == '__main__':
-    build_bookmarks_collection()
-    get_bookmarks_added_in_last_days(7)
-    get_random_bookmarks(10)
+    print_posts()
+    # build_bookmarks_collection()
+    # get_bookmarks_added_in_last_days(7)
+    # get_random_bookmarks(10)

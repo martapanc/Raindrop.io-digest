@@ -1,13 +1,22 @@
-from datetime import datetime
 import random
-
 import pytz as pytz
 
 from auth_operations import r
+from datetime import datetime
+from pymongo import MongoClient
 
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 collections = {}
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client.test
+
+
+def print_posts():
+    posts = db.posts
+    posts.insert_one({"title": "Hello world!", "author": "Marta Pancaldi", "created": datetime.now(), "tags": ['test', 'hello']})
+    print(posts.find())
 
 
 def add_collection(collection):
@@ -29,7 +38,7 @@ def format_bookmarks(bookmarks):
     result = []
     for b in bookmarks:
         if True:
-        # if get_last_update_time() < to_datetime(b['lastUpdate']):
+            # if get_last_update_time() < to_datetime(b['lastUpdate']):
             result.append({
                 "id": b['_id'],
                 "title": b['title'],
