@@ -1,7 +1,6 @@
 import requests
 
-from Raindrops import collections, add_collection, add_bookmarks, update_time, get_last_update_time, \
-    get_random_bookmark, print_posts
+from Raindrops import collections, add_collection, add_bookmarks, update_time, get_random_bookmark, read_collections
 from auth_operations import get_auth_header
 from datetime import datetime, timedelta
 
@@ -18,13 +17,12 @@ def get_collections():
 
 
 def get_bookmarks():
-    for coll_id, coll in collections.items():
-        if True:
-        # if get_last_update_time() < coll['last_update']:
-            url = "https://api.raindrop.io/rest/v1/raindrops/{}".format(coll_id)
+    for coll in read_collections():
+        coll_id = coll['collection_id']
+        url = "https://api.raindrop.io/rest/v1/raindrops/{}".format(coll_id)
 
-            raindrops_rs = requests.get(url, headers=auth_header).json()
-            add_bookmarks(coll_id, raindrops_rs['items'])
+        raindrops_rs = requests.get(url, headers=auth_header).json()
+        add_bookmarks(coll_id, raindrops_rs['items'])
 
     update_time()
 
@@ -49,7 +47,7 @@ def get_random_bookmarks(number):
 
 
 if __name__ == '__main__':
-    print_posts()
-    # build_bookmarks_collection()
+    # print_posts()
+    build_bookmarks_collection()
     # get_bookmarks_added_in_last_days(7)
     # get_random_bookmarks(10)

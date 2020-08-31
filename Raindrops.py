@@ -10,28 +10,48 @@ DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 collections = {}
 
 client = MongoClient('mongodb://localhost:27017/')
-db = client.test
+db = client.DigestAppDB
 
 
 def print_posts():
     posts = db.posts
-    posts.insert_one({"title": "Hello world!", "author": "Marta Pancaldi", "created": datetime.now(), "tags": ['test', 'hello']})
+    posts.insert_one(
+        {"title": "Hello world!", "author": "Marta Pancaldi", "created": datetime.now(), "tags": ['test', 'hello']})
     print(posts.find())
 
 
 def add_collection(collection):
-    collections[collection['_id']] = {
-        "id": collection['_id'],
-        "name": collection['title'],
-        "created": to_datetime(collection['created']),
-        "last_update": to_datetime(collection['lastUpdate']),
-        "count": collection['count'],
-        "bookmarks": []
-    }
+    found = db.raindrops.find_one({"collection_id": collection['_id']})
+    new_datetime = to_datetime(collection['lastUpdate'])
+    if not found:
+        db.raindrops.insert_one({
+            "collection_id": collection['_id'],
+            "name": collection['title'],
+            "created": to_datetime(collection['created']),
+            "last_update": new_datetime,
+            "count": collection['count'],
+            "bookmarks": []
+        })
+    else:
+        existing_last_update = found['last_update']
+        if new_datetime > existing_last_update:
+            db.raindrops.update_one(
+                {"collection_id": found['collection_id']},
+                {"$set": {"last_update": new_datetime, "count": collection["count"]}}
+            )
+
+
+def read_collections():
+    return db.raindrops.find({})
 
 
 def add_bookmarks(collection_id, bookmarks):
-    collections[collection_id]['bookmarks'] = format_bookmarks(bookmarks)
+    db.raindrops.update_one(
+        {"collection_id": collection_id},
+        {"$set": {
+            "bookmarks": format_bookmarks(bookmarks)
+        }}
+    )
 
 
 def format_bookmarks(bookmarks):
