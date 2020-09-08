@@ -2,7 +2,7 @@ import random
 import pytz as pytz
 
 from auth_operations import r
-from datetime import datetime
+from datetime import datetime, timedelta
 from pymongo import MongoClient
 
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
@@ -45,6 +45,15 @@ def read_collections():
     return db.raindrops.find({})
 
 
+def read_bookmarks_of_last_days(no_of_days):
+    date = datetime.today().replace(hour=0, minute=0, second=0) - timedelta(days=no_of_days)
+    aggregate = db.raindrops.aggregate(
+        [{"$match": {"bookmarks": {"$elemMatch": {"created": {"$gte": date}}}}}, {"$unwind": "$bookmarks"},
+         {"$match": {"bookmarks.created": {"$gte": date}}},
+         {"$project": {"bookmark": "$bookmarks"}}])
+    return aggregate
+
+
 def add_bookmarks(collection_id, bookmarks):
     db.raindrops.update_one(
         {"collection_id": collection_id},
@@ -73,6 +82,10 @@ def format_bookmarks(bookmarks):
 def get_random_bookmark():
     random_collection = random.choice(list(read_collections()))
     return random.choice(random_collection['bookmarks'])
+
+
+def get_random(collection):
+    return random.choice(collection)
 
 
 def update_time():

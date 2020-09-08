@@ -1,6 +1,7 @@
 import requests
 
-from Raindrops import collections, add_collection, add_bookmarks, update_time, get_random_bookmark, read_collections
+from Raindrops import collections, add_collection, add_bookmarks, update_time, get_random_bookmark, read_collections, \
+    read_bookmarks_of_last_days, get_random
 from auth_operations import get_auth_header
 from datetime import datetime, timedelta
 
@@ -48,6 +49,23 @@ def get_random_bookmarks(number):
         random_bookmark = get_random_bookmark()
         if random_bookmark['id'] not in [j['id'] for j in bookmarks]:
             bookmarks.append(random_bookmark)
+
+    return bookmarks
+
+
+def get_random_bookmarks_in_last_days(number, days):
+    bookmarks = []
+
+    recent_bookmarks = [b for b in read_bookmarks_of_last_days(days)]
+
+    if len(recent_bookmarks) <= number or number == 0:
+        for b in recent_bookmarks:
+            bookmarks.append(b['bookmark'])
+    else:
+        while len(bookmarks) < number:
+            random = get_random(recent_bookmarks)
+            if random['bookmark']['id'] not in [k['id'] for k in bookmarks]:
+                bookmarks.append(random['bookmark'])
 
     return bookmarks
 

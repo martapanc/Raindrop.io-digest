@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_httpauth import HTTPTokenAuth
 
-from main import get_random_bookmarks
+from main import get_random_bookmarks, get_random_bookmarks_in_last_days
 
 app = Flask(__name__)
 auth = HTTPTokenAuth(scheme='Bearer')
@@ -47,6 +47,12 @@ def latest_raindrops():
 @auth.login_required
 def random_raindrops(number):
     return jsonify(get_random_bookmarks(int(number)))
+
+
+@app.route('/random/<number>/days/<days>', methods=['GET'])
+@auth.login_required
+def random_recent_raindrops(number, days):
+    return jsonify(get_random_bookmarks_in_last_days(int(number), int(days)))
 
 
 if __name__ == '__main__':
