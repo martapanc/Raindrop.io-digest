@@ -71,7 +71,7 @@ def format_bookmarks(bookmarks):
 
 
 def get_random_bookmark():
-    _, random_collection = random.choice(list(collections.items()))
+    random_collection = random.choice(list(read_collections()))
     return random.choice(random_collection['bookmarks'])
 
 

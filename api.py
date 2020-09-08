@@ -6,6 +6,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_httpauth import HTTPTokenAuth
 
+from main import get_random_bookmarks
+
 app = Flask(__name__)
 auth = HTTPTokenAuth(scheme='Bearer')
 CORS(app)
@@ -39,6 +41,12 @@ def hello_world():
 def latest_raindrops():
 
     return jsonify({"message": "hello world", "body": request.get_json()})
+
+
+@app.route('/random/<number>', methods=['GET'])
+@auth.login_required
+def random_raindrops(number):
+    return jsonify(get_random_bookmarks(int(number)))
 
 
 if __name__ == '__main__':

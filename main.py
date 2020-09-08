@@ -42,8 +42,14 @@ def get_bookmarks_added_in_last_days(days):
 
 
 def get_random_bookmarks(number):
-    for _i in range(1, number):
-        print(get_random_bookmark())
+    bookmarks = []
+
+    while len(bookmarks) < number:
+        random_bookmark = get_random_bookmark()
+        if random_bookmark['id'] not in [j['id'] for j in bookmarks]:
+            bookmarks.append(random_bookmark)
+
+    return bookmarks
 
 
 if __name__ == '__main__':
