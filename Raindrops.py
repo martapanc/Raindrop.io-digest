@@ -13,13 +13,6 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client.DigestAppDB
 
 
-def print_posts():
-    posts = db.posts
-    posts.insert_one(
-        {"title": "Hello world!", "author": "Marta Pancaldi", "created": datetime.now(), "tags": ['test', 'hello']})
-    print(posts.find())
-
-
 def add_collection(collection):
     found = db.raindrops.find_one({"collection_id": collection['_id']})
     new_datetime = to_datetime(collection['lastUpdate'])

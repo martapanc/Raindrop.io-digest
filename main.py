@@ -71,7 +71,4 @@ def get_random_bookmarks_in_last_days(number, days):
 
 
 if __name__ == '__main__':
-    # print_posts()
     build_bookmarks_collection()
-    # get_bookmarks_added_in_last_days(7)
-    # get_random_bookmarks(10)
