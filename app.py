@@ -23,7 +23,6 @@ tokens = {
 
 @auth.verify_token
 def verify_token(token):
-    print("Verifying token")
     if token in tokens:
         return tokens[token]
 
@@ -47,7 +46,6 @@ def latest_raindrops():
 @app.route('/list', methods=['POST'])
 @auth.login_required
 def list_raindrops():
-    print("Retrieving collections")
     read_collections_ = [{'name': x['name'], 'bookmarks': x['bookmarks']} for x in read_collections()]
     return jsonify(read_collections_)
 
