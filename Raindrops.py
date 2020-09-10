@@ -1,3 +1,4 @@
+import os
 import random
 import pytz as pytz
 
@@ -5,11 +6,15 @@ from auth_operations import r
 from datetime import datetime, timedelta
 from pymongo import MongoClient
 
+# MONGO_CONNECTION = 'mongodb://localhost:27017/'
+MONGO_CONNECTION = "mongodb+srv://{}:{}@cluster0.yx4fl.azure.mongodb.net/DigestAppDB?retryWrites=true&w=majority".format(
+    os.getenv('MONGO_USERNAME'), os.getenv('MONGO_PW'))
+
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 collections = {}
 
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient(MONGO_CONNECTION)
 db = client.DigestAppDB
 
 

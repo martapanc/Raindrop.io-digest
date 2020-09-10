@@ -21,7 +21,17 @@ load_dotenv(dotenv_path=env_path)
 BASE_URL = "https://raindrop.io/oauth/"
 AUTH = "{}authorize?redirect_uri={}&client_id={}".format(BASE_URL, REDIRECT_URL, os.getenv('RAINDROP_CLIENT_ID'))
 
-r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+
+# host = 'localhost'
+# port = '6379'
+
+host = 'ec2-3-217-82-56.compute-1.amazonaws.com'
+port = '30589'
+
+r = redis.Redis(host=host, port=port, db=0,
+                username='h',
+                password=os.getenv('REDIS_PW'),
+                decode_responses=True)
 
 
 def obtain_code():
