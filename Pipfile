@@ -15,6 +15,7 @@ selenium = "*"
 redis = "*"
 pytz = "*"
 pymongo = "*"
+slack-webhook = "*"
 
 [requires]
 python_version = "3.8"

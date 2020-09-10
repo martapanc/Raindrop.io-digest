@@ -74,8 +74,19 @@ def obtain_token():
 
 def refresh_token():
     url = 'https://raindrop.io/oauth/access_token'
-    data = {'grant_type': 'refresh_token', 'refresh_token': r.get('refresh_token')}
-    refresh_rs = requests.post(url, data=data).json()
+
+    data = {
+        'client_id': os.getenv('RAINDROP_CLIENT_ID'),
+        'client_secret': os.getenv('RAINDROP_CLIENT_SECRET'),
+        'grant_type': 'refresh_token',
+        'refresh_token': r.get('refresh_token')
+    }
+    headers = {
+        'content-type': 'application/x-www-form-urlencoded',
+        'accept': 'application/json'
+    }
+
+    refresh_rs = requests.post(url, headers=headers, data=data).json()
     r.set('access_token', refresh_rs['access_token'])
 
 
