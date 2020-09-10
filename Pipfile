@@ -16,6 +16,7 @@ redis = "*"
 pytz = "*"
 pymongo = "*"
 slack-webhook = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
