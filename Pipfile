@@ -17,6 +17,7 @@ pytz = "*"
 pymongo = "*"
 slack-webhook = "*"
 gunicorn = "*"
+dnspython = "*"
 
 [requires]
 python_version = "3.8"
