@@ -43,20 +43,20 @@ def latest_raindrops():
     return jsonify({"message": "hello world", "body": request.get_json()})
 
 
-@app.route('/list', methods=['GET'])
+@app.route('/list', methods=['POST'])
 @auth.login_required
 def list_raindrops():
     read_collections_ = [{'name': x['name'], 'bookmarks': x['bookmarks']} for x in read_collections()]
     return jsonify(read_collections_)
 
 
-@app.route('/random/<number>', methods=['GET'])
+@app.route('/random/<number>', methods=['POST'])
 @auth.login_required
 def random_raindrops(number):
     return jsonify(get_random_bookmarks(int(number)))
 
 
-@app.route('/random/<number>/days/<days>', methods=['GET'])
+@app.route('/random/<number>/days/<days>', methods=['POST'])
 @auth.login_required
 def random_recent_raindrops(number, days):
     return jsonify(get_random_bookmarks_in_last_days(int(number), int(days)))
