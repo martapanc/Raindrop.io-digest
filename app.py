@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_httpauth import HTTPTokenAuth
 
+from Raindrops import read_collections
 from main import get_random_bookmarks, get_random_bookmarks_in_last_days
 
 app = Flask(__name__)
@@ -39,8 +40,14 @@ def hello_world():
 @app.route('/latest', methods=['POST'])
 @auth.login_required
 def latest_raindrops():
-
     return jsonify({"message": "hello world", "body": request.get_json()})
+
+
+@app.route('/list', methods=['GET'])
+@auth.login_required
+def list_raindrops():
+    read_collections_ = [{'name': x['name'], 'bookmarks': x['bookmarks']} for x in read_collections()]
+    return jsonify(read_collections_)
 
 
 @app.route('/random/<number>', methods=['GET'])
